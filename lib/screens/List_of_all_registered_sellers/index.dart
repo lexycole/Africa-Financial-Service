@@ -22,18 +22,18 @@ class ListOfAllSellersScreen extends StatefulWidget {
 
 class _ListOfAllSellersScreenState extends State<ListOfAllSellersScreen> {
   final LoginController loginController =
-      Get.find(); // Get the instance of LoginController
+      Get.find(); 
   List<SellersListModel> listSellers = [];
-  bool isLoading = false; //declare state
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    fetchSellersList(); // Call the function to fetch data on widget initialization
+    fetchSellersList();
   }
 
   Future<void> fetchSellersList() async {
-    // set state loading
+
     setState(() {
       isLoading = true;
     });
@@ -49,13 +49,12 @@ class _ListOfAllSellersScreenState extends State<ListOfAllSellersScreen> {
     try {
       var url = Uri.parse(ApiEndPoints.baseUrl +
           ApiEndPoints
-              .authEndpoints.sellersList); // Replace with your API endpoint
+              .authEndpoints.sellersList);
 
       var response = await http.get(url, headers: headers);
       if (response.statusCode == 200) {
         var jsonData =
             jsonDecode(response.body)['data']['results'] as List<dynamic>;
-        // Create a list to hold the fetched sellers
         List<SellersListModel> fetchedSellers = jsonData.map((item) {
           return SellersListModel(
             uid: item['uid'],
@@ -117,7 +116,7 @@ class _ListOfAllSellersScreenState extends State<ListOfAllSellersScreen> {
           borderRadius:
               BorderRadius.circular(10),
         ),
-        elevation: 4, // Add elevation for a raised effect
+        elevation: 4,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -135,7 +134,7 @@ class _ListOfAllSellersScreenState extends State<ListOfAllSellersScreen> {
                     child: Row(
                       children: [
                         Text("Add"),
-                        Icon(Icons.add), // Plus icon
+                        Icon(Icons.add),
                       ],
                     ),
                   ),
