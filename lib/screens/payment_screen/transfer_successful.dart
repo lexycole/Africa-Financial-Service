@@ -6,14 +6,16 @@ import 'package:xcrowme/widgets/big_text.dart';
 import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 import 'package:xcrowme/auth/auth_middleware.dart';
 
-class WithdrawCompleteScreen extends StatefulWidget {
-  const WithdrawCompleteScreen({Key? key}) : super(key: key);
+
+class TransferSuccessfulScreen extends StatefulWidget {
+  const TransferSuccessfulScreen({Key? key}) : super(key: key);
 
   @override
-  State<WithdrawCompleteScreen> createState() => _WithdrawCompleteScreenState();
+  State<TransferSuccessfulScreen> createState() => _TransferSuccessfulScreenState();
 }
 
-class _WithdrawCompleteScreenState extends State<WithdrawCompleteScreen> {
+class _TransferSuccessfulScreenState extends State<TransferSuccessfulScreen> {
+
   @override
   void initState() {
     super.initState();
@@ -27,7 +29,7 @@ class _WithdrawCompleteScreenState extends State<WithdrawCompleteScreen> {
         showTimerDialog(1140000);
       }, 
       child: Scaffold(
-      body:Column(
+      body: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
@@ -44,14 +46,14 @@ class _WithdrawCompleteScreenState extends State<WithdrawCompleteScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    'Withdraw Completed',
+                    'Fund Sent',
                     style: TextStyle(
                         fontSize: Dimensions.font26,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Money has been released to the receiver',
+                    'Money sent to the account you provided',
                     style: TextStyle(fontSize: Dimensions.font16),
                   ),
                 ])),

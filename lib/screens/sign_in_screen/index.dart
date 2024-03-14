@@ -5,7 +5,6 @@ import 'package:xcrowme/controllers/login_controller.dart';
 import 'package:xcrowme/routes/route_helpers.dart';
 import 'package:xcrowme/utils/colors.dart';
 import 'package:xcrowme/utils/dimensions.dart';
-import 'package:xcrowme/widgets/app_text_field.dart';
 import 'package:xcrowme/widgets/big_text.dart';
 import 'package:xcrowme/widgets/password_text_field.dart';
 import 'package:xcrowme/widgets/phone_input.dart';
@@ -20,6 +19,7 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   LoginController loginController = Get.put(LoginController());
   String phoneNumber = '';
+ 
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +92,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   ],
                 ),
                 SizedBox(height: Dimensions.height20),
-                // Password
                 PasswordTextField(
                   hintText: ' Enter Password',
                   icon: Icons.lock_outline_rounded,
@@ -100,7 +99,6 @@ class _SignInScreenState extends State<SignInScreen> {
                   isPassword: true,
                 ),
                 SizedBox(height: Dimensions.height20),
-                // Sign In to your account
                 Padding(
                   padding: const EdgeInsets.only(left: 16.0),
                   child: Row(
@@ -129,7 +127,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 16),
                   child: GestureDetector(
-                    onTap: () => loginController?.loginWithEmail(),
+                    onTap: () => loginController?.login(),
                     child: Container(
                       width: Dimensions.screenWidth / 10 * 8,
                       height: Dimensions.screenHeight / 10,
@@ -171,6 +169,8 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: Dimensions.height20,
                 ),
               ],
-            )));
+            )
+          )
+        );
   }
 }

@@ -1,4 +1,3 @@
-
 class StoreListModel {
   final String uid;
   final String name;

@@ -13,6 +13,11 @@ import 'package:xcrowme/utils/dimensions.dart';
 import 'package:xcrowme/widgets/app_text_field.dart';
 import 'package:xcrowme/widgets/big_text.dart';
 import 'package:xcrowme/screens/profile_screen/index.dart';
+import 'package:xcrowme/widgets/phone_input.dart';
+import 'package:intl/intl.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
+
 
 void main() {
   runApp(CreateSellerScreen());
@@ -28,6 +33,7 @@ class CreateSellerScreen extends StatelessWidget {
 }
 
 class CreateSellerApp extends StatefulWidget {
+
   @override
   _CreateSellerAppState createState() => _CreateSellerAppState();
 }
@@ -38,6 +44,9 @@ class _CreateSellerAppState extends State<CreateSellerApp> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
+
+
+  DateTime? selectedDate;
 
   Future<void> _createSeller() async {
     if (!_formKey.currentState!.validate()) {
@@ -64,9 +73,8 @@ class _CreateSellerAppState extends State<CreateSellerApp> {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Api-Key': 'gi6paFHGatKXClIE',
-        'Api-Sec-Key':
-            'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+        'Api-Key': '',
+        'Api-Sec-Key': '',
         'Authorization': 'Bearer ${loginController.accessToken.value}',
       };
 
@@ -88,15 +96,16 @@ class _CreateSellerAppState extends State<CreateSellerApp> {
           dob: dob,
           sellerId: sellerId,
         );
-        Get.to(
-            () => ProfileScreen(
-                  initialValue: '',
-                  sellerId: seller.uid,
-                ),
+        Get.to( () => ProfileScreen(
+          initialValue: '',
+          sellerId: seller.uid),
             transition: Transition.rightToLeft);
-        // Get.to(ListOfAllSellersScreen(newSellers: [seller])); // Pass the updated sellers list
-        // Get.to(ListOfAllSellersScreen(newSellers: [seller])); // Pass the updated sellers list
         showSuccessSnackBar("Seller Created Successfully", title: "Perfect");
+      } else {
+        throw jsonDecode(response.body)['data']['first_name'] ??
+              jsonDecode(response.body)['data']['last_name'] ??
+              jsonDecode(response.body)['data']['phone'] ??
+              jsonDecode(response.body)['data']['dob'];
       }
     } catch (e) {
       showFailureSnackBar('Error', title: e.toString());
@@ -105,128 +114,208 @@ class _CreateSellerAppState extends State<CreateSellerApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Container(
-              padding: EdgeInsets.all(Dimensions.width20),
-              width: Dimensions.screenWidth,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.arrow_back_ios,
-                        color: AppColors.AppBannerColor),
-                    onPressed: () => Get.offAll(BottomTab(initialIndex: 1)),
-                  ),
-                  // SizedBox(width: 10),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Create Seller",
-                        style: TextStyle(
-                          fontSize: Dimensions.font20,
-                          fontWeight: FontWeight.bold,
+    return IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      }, 
+      child: Scaffold(
+        body: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.all(Dimensions.width20),
+                width: Dimensions.screenWidth,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios,
+                          color: AppColors.AppBannerColor),
+                          onPressed: () => Get.offAll(BottomTab(initialIndex: 1)),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Create Seller",
+                          style: TextStyle(
+                            fontSize: Dimensions.font20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // Create Seller
-                      Container(
-                          margin: EdgeInsets.only(left: Dimensions.width20),
-                          width: double.maxFinite,
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Create a new seller',
-                                  style: TextStyle(
-                                      fontSize: Dimensions.font26,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ])),
-                      SizedBox(height: Dimensions.height20),
-                      // Phone Number
-                      Padding(
-                          padding: EdgeInsets.all(0.0),
-                          child: Form(
-                              key: _formKey,
-                              child: Column(
+              Expanded(
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                            margin: EdgeInsets.only(left: Dimensions.width20),
+                            width: double.maxFinite,
+                            child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // First Name
-                                  AppTextField(
-                                    hintText: 'First Name',
-                                    icon: Icons.account_circle_outlined,
-                                    textController: _firstNameController,
+                                  Text(
+                                    'Create a new seller',
+                                    style: TextStyle(
+                                        fontSize: Dimensions.font26,
+                                        fontWeight: FontWeight.bold),
                                   ),
-                                  SizedBox(height: Dimensions.height20),
-                                  // Last Name
-                                  AppTextField(
-                                    hintText: 'Last Name',
-                                    icon: Icons.account_circle_outlined,
-                                    textController: _lastNameController,
-                                  ),
-                                  SizedBox(height: Dimensions.height20),
-                                  AppTextField(
-                                      hintText: 'yyyy-mm-dd',
-                                      icon: Icons.date_range_outlined,
-                                      textController: _dobController),
-                                  SizedBox(height: Dimensions.height20),
-                                  // Phone Number
-                                  AppTextField(
-                                    hintText: '+234**********',
-                                    icon: Icons.phone,
-                                    textController: _phoneController,
-                                  ),
-                                  SizedBox(height: Dimensions.height30),
-                                  // Sign In
-                                  Center(
-                                    child: GestureDetector(
-                                      onTap: _createSeller,
-                                      child: Container(
-                                        width: Dimensions.screenWidth / 10 * 9,
-                                        height: Dimensions.screenHeight / 10,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.AppBannerColor,
-                                          borderRadius: BorderRadius.circular(
-                                              Dimensions.radius20),
+                                ])),
+                        SizedBox(height: Dimensions.height20),
+                        Padding(
+                            padding: EdgeInsets.all(0.0),
+                            child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    AppTextField(
+                                      hintText: 'First Name',
+                                      icon: Icons.account_circle_outlined,
+                                      textController: _firstNameController,
+                                    ),
+                                    SizedBox(height: Dimensions.height20),
+                                    AppTextField(
+                                      hintText: 'Last Name',
+                                      icon: Icons.account_circle_outlined,
+                                      textController: _lastNameController,
+                                    ),
+                                    SizedBox(height: Dimensions.height20),
+                                    Container(
+                                      margin: EdgeInsets.only(left: Dimensions.height20, right: Dimensions.height20),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(Dimensions.radius30),
+                                        boxShadow: [
+                                          BoxShadow (
+                                            blurRadius: 10,
+                                            spreadRadius: 7,
+                                            offset: Offset(1, 10),
+                                            color: Colors.grey.withOpacity(0.2)
+                                          )
+                                        ]
+                                      ),
+                                      child: TextField(
+                                          controller: _dobController,
+                                          decoration: InputDecoration(
+                                              hintText: 'Enter Date',
+                                              prefixIcon: Icon(
+                                                Icons.calendar_today,
+                                                color:AppColors.textColor
+                                              ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(Dimensions.radius15),
+                                                  borderSide: BorderSide(
+                                                    width: 1.0,
+                                                    color: Colors.grey
+                                                  )
+                                              ),
+                                                enabledBorder: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(Dimensions.radius30),
+                                                  borderSide: BorderSide(
+                                                    width: 1.0,
+                                                    color: Colors.white
+                                                  ) 
+                                              ),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(Dimensions.radius15),
+                                              ),
+                                          ),
+                                          readOnly: true,
+                                          onTap: () async{
+                                            DateTime? pickedDate=await showDatePicker(context: context,
+                                            initialDate: DateTime.now(),
+                                            firstDate: DateTime(2000),
+                                            lastDate: DateTime(2101),
+                                            );
+                                            if(pickedDate!=null){
+                                              String formattedDate=DateFormat("yyyy-MM-dd").format(pickedDate);
+                                                setState(() {
+                                                  _dobController.text=formattedDate.toString();
+                                                });
+                                            }else{
+                                              print("Not selected");
+                                            }
+                                          },
                                         ),
-                                        child: Center(
-                                          child: BigText(
-                                            text: "Create Seller",
-                                            size: Dimensions.font20 +
-                                                Dimensions.font20 / 2,
-                                            color: Colors.white,
+                                    ),
+                                    SizedBox(height: Dimensions.height20),
+                                  Row(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 20.0,),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Image.asset(
+                                                'ng.png',
+                                                width: 50,
+                                                height: 30,
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                '+234',
+                                                style: TextStyle(
+                                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                            child: PhoneTextField(
+                                              textController: _phoneController,
+                                              hintText: '8xx xxxx xxx',
+                                              icon: Icons.phone,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: Dimensions.height30),
+                                    Center(
+                                      child: GestureDetector(
+                                        onTap: _createSeller,
+                                        child: Container(
+                                          width: Dimensions.screenWidth / 10 * 9,
+                                          height: Dimensions.screenHeight / 10,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.AppBannerColor,
+                                            borderRadius: BorderRadius.circular(
+                                                Dimensions.radius20),
+                                          ),
+                                          child: Center(
+                                            child: BigText(
+                                              text: "Create Seller",
+                                              size: Dimensions.font20 +
+                                                  Dimensions.font20 / 2,
+                                              color: Colors.white,
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                      height: Dimensions.screenHeight * 0.05),
-                                ],
-                              )))
-                    ],
+                                    SizedBox(
+                                        height: Dimensions.screenHeight * 0.05),
+                                  ],
+                                )))
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }

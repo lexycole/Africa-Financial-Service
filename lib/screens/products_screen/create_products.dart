@@ -12,6 +12,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:xcrowme/widgets/app_text_field.dart';
 import 'package:xcrowme/widgets/big_text.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
+
 
 class CreateProducts extends StatefulWidget {
   final String sellerId;
@@ -38,13 +41,6 @@ class _CreateProductsState extends State<CreateProducts> {
 
   final LoginController loginController = Get.find<LoginController>();
 
-
-  void showSnackBar(bool success, String msg) {
-    success
-        ? showSuccessSnackBar(msg, title: "Perfect")
-        : showFailureSnackBar(msg, title: "Failed to create store");
-  }
-
   Future<void> _createProduct() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -59,13 +55,13 @@ class _CreateProductsState extends State<CreateProducts> {
     try {
       final createProductUrl = Uri.parse(
           ApiEndPoints.baseUrl + ApiEndPoints.authEndpoints.createProduct);
-
+      print('$createProductUrl:create produc url');
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Api-Key': 'gi6paFHGatKXClIE',
+        'Api-Key': '',
         'Api-Sec-Key':
-            'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+            '',
         'Authorization': 'Bearer ${loginController.accessToken.value}',
       };
 
@@ -76,7 +72,7 @@ class _CreateProductsState extends State<CreateProducts> {
         'quantity': quantity,
         'unlimited': true,
         'link': link,
-        'seller_uid': widget.sellerId, // Use the passed sellerId
+        'seller_uid': widget.sellerId,
       };
 
       final http.Response response = await http.post(
@@ -103,20 +99,23 @@ class _CreateProductsState extends State<CreateProducts> {
               link: '',
               sellerId: '',
             ));
-
-        showSnackBar(true, "Product Created Successfully");
+          showSuccessSnackBar("Product Created Successfully", title: "Perfect");
       } else {
-         showSnackBar(false, "Error");
+        showFailureSnackBar('Error');
       }
     } catch (e) {
-      print(e.toString());
-      showSnackBar(false, e.toString());
+      showFailureSnackBar('Error', title: e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      }, 
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -138,12 +137,12 @@ class _CreateProductsState extends State<CreateProducts> {
                       SizedBox(height: Dimensions.height20),
                       AppTextField(
                           hintText: 'Your label Name',
-                          icon: Icons.account_circle_outlined,
+                          icon: Icons.label_outlined,
                           textController: _labelController),
                       SizedBox(height: Dimensions.height20),
                       AppTextField(
                           hintText: 'Your price tag',
-                          icon: Icons.phone,
+                          icon: Icons.payments_outlined,
                           textController: _priceController),
                       SizedBox(height: Dimensions.height20),
                       AppTextField(
@@ -153,34 +152,40 @@ class _CreateProductsState extends State<CreateProducts> {
                       SizedBox(height: Dimensions.height20),
                       AppTextField(
                           hintText: 'Number Quantity',
-                          icon: Icons.phone,
+                          icon: Icons.production_quantity_limits_outlined,
                           textController: _quantityController),
                       SizedBox(height: Dimensions.height20),
+                      Text('Enter your store link name from create store screen'),
+                      SizedBox(height: Dimensions.height10),
                       AppTextField(
-                          hintText: 'your link Name',
-                          icon: Icons.phone,
+                          hintText: 'Store-Link-Name',
+                          icon: Icons.link,
                           textController: _linkController),
                       SizedBox(height: Dimensions.height45),
-                      GestureDetector(
-                          onTap: _createProduct,
-                          child: Container(
-                              width: Dimensions.screenWidth / 10 * 9,
-                              height: Dimensions.screenHeight / 10,
-                              decoration: BoxDecoration(
-                                color: AppColors.AppBannerColor,
-                                borderRadius:
-                                    BorderRadius.circular(Dimensions.radius20),
-                              ),
-                              child: Center(
-                                  child: BigText(
-                                      text: "Create",
-                                      size: Dimensions.font20 +
-                                          Dimensions.font20 / 2,
-                                      color: Colors.white)))),
+                      ElevatedButton(
+                        onPressed: _createProduct,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.AppBannerColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(Dimensions.radius20),
+                          ),
+                          fixedSize: Size(
+                            Dimensions.screenWidth / 10 * 9,
+                            Dimensions.screenHeight / 10,
+                          ),
+                        ),
+                        child: BigText(
+                        text: "Create",
+                        size: Dimensions.font20 + Dimensions.font20 / 2,
+                        color: Colors.white,
+                      ),
+                    )
+
                     ],
                   )))
         ],
       ),
+      )
     );
   }
 }

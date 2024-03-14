@@ -16,9 +16,9 @@ class SellerController extends ChangeNotifier {
       var headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Api-Key': 'gi6paFHGatKXClIE',
+        'Api-Key': '',
         'Api-Sec-Key':
-            'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+            '',
         'Authorization': 'Bearer ${loginController.accessToken.value}',
       };
 
@@ -37,7 +37,6 @@ class SellerController extends ChangeNotifier {
         print(json);
         showSuccessSnackBar("Seller created successfully", title: "Perfect");
       } else {
-        // Handle error response
         throw jsonDecode(response.body)['data']["first_name"] ??
             jsonDecode(response.body)['data']['last_name'] ??
             jsonDecode(response.body)['data']['phone'] ??

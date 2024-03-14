@@ -12,7 +12,7 @@ void showFailureSnackBar(String message, {bool isError = true, String title = "E
       style: const TextStyle(
         color: Colors.white,
       ),
-      maxLines: 2, // Adjust the number of lines as needed
+      maxLines: 2,
       overflow: TextOverflow.ellipsis,
     ),
     colorText: Colors.white,

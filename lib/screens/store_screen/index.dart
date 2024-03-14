@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:xcrowme/base/show_failure_custom_message.dart';
 import 'package:xcrowme/controllers/login_controller.dart';
 import 'package:xcrowme/models/store_list_modal.dart';
 import 'package:xcrowme/models/store_modal.dart';
@@ -11,6 +10,9 @@ import 'package:xcrowme/utils/api_endpoints.dart';
 import 'package:xcrowme/utils/colors.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
+
 
 class StoreScreen extends StatefulWidget {
   final List<StoreModel> newStores;
@@ -20,14 +22,13 @@ class StoreScreen extends StatefulWidget {
 }
 
 class _StoreScreenState extends State<StoreScreen> {
-  final LoginController loginController =
-      Get.find(); // Get the instance of LoginController
+  final LoginController loginController = Get.find();
   List<StoreListModel> listStores = [];
-  bool isLoading = false; // Declare state
+  bool isLoading = false; 
   @override
   void initState() {
     super.initState();
-    fetchStoresList(); // Call the function to fetch data on widget initialization
+    fetchStoresList();
   }
 
   Future<void> fetchStoresList() async {
@@ -38,8 +39,8 @@ class _StoreScreenState extends State<StoreScreen> {
     var headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Api-Key': 'gi6paFHGatKXClIE',
-      'Api-Sec-Key': 'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+      'Api-Key': '',
+      'Api-Sec-Key': '',
       'Authorization': 'Bearer ${loginController.accessToken.value}',
     };
 
@@ -50,10 +51,9 @@ class _StoreScreenState extends State<StoreScreen> {
       if (response.statusCode == 200) {
         var jsonData =
             jsonDecode(response.body)['data']['results'] as List<dynamic>;
-        // Create a list to hold the fetched STORES
         List<StoreListModel> fetchedStoresList = jsonData.map((item) {
           return StoreListModel(
-            uid: item['uid'] ?? '', // Provide a default value if null
+            uid: item['uid'] ?? '',
             name: item['name'] ?? '',
             phone: item['phone'] ?? '',
             link: item['link'] ?? '',
@@ -70,11 +70,11 @@ class _StoreScreenState extends State<StoreScreen> {
                 link: store.link,
               );
             }).toList();
-            listStores = [...newStoresList.reversed, ...fetchedStoresList];
+            listStores = [...newStoresList, ...fetchedStoresList];
           } else {
             listStores = fetchedStoresList;
           }
-          isLoading = false; // set loading to false
+          isLoading = false; 
         });
       } else {
         throw 'Error: ${response.statusCode}';
@@ -83,19 +83,22 @@ class _StoreScreenState extends State<StoreScreen> {
       setState(() {
         isLoading = false;
       });
-      // showFailureSnackBar('Error', title: e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      }, 
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
-            Get.offAll(BottomTab(
-                initialIndex: 1)); // Set the index of the HistoryScreen
+            Get.offAll(BottomTab( initialIndex: 1));
           },
         ),
         backgroundColor: AppColors.AppBannerColor,
@@ -149,11 +152,9 @@ class _StoreScreenState extends State<StoreScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Screen Title
-                        Center(
-                            child: CircleAvatar(
+                        Center(child: CircleAvatar(
                           radius: 30,
-                          backgroundColor: AppColors.bgBtnColor,
+                          backgroundColor: AppColors.AppBannerColor,
                           child:
                               Icon(Icons.store, color: Colors.white, size: 35),
                         )),
@@ -161,7 +162,7 @@ class _StoreScreenState extends State<StoreScreen> {
                         Container(
                           alignment: Alignment.center,
                           child: Text(
-                            "Your's stores",
+                            "Your stores",
                             style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -169,7 +170,6 @@ class _StoreScreenState extends State<StoreScreen> {
                           ),
                         ),
                         SizedBox(height: 10),
-                        // User One
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -180,8 +180,7 @@ class _StoreScreenState extends State<StoreScreen> {
                                 children: [
                                   Expanded(
                                     child: SizedBox(
-                                      height: constraints
-                                          .maxHeight, // Set a fixed height
+                                      height: constraints.maxHeight,
                                       child: ListView.builder(
                                         physics: const BouncingScrollPhysics(),
                                         itemCount: listStores.length,
@@ -193,14 +192,12 @@ class _StoreScreenState extends State<StoreScreen> {
                                                 padding: EdgeInsets.all(8),
                                                 child: Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                                      MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     Expanded(
                                                       child: Column(
                                                         crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                            CrossAxisAlignment.start,
                                                         children: [
                                                           Text('${store.name}',
                                                               style: TextStyle(
@@ -225,12 +222,9 @@ class _StoreScreenState extends State<StoreScreen> {
                                                     Container(
                                                       decoration: BoxDecoration(
                                                         color: Colors.grey[200],
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
+                                                        borderRadius:BorderRadius .circular(10),
                                                         border: Border.all(
-                                                            color: Colors
-                                                                .grey[400]!,
+                                                            color: Colors.grey[400]!,
                                                             width: 1),
                                                       ),
                                                       child: Icon(
@@ -241,23 +235,18 @@ class _StoreScreenState extends State<StoreScreen> {
                                               ),
                                               leading: Container(
                                                 decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
+                                                  borderRadius:BorderRadius.circular(8),
                                                   color: Colors.grey[300],
                                                 ),
                                                 padding: EdgeInsets.all(8),
-                                                child: Icon(
-                                                  Icons.store_outlined,
+                                                child: Icon(Icons.store_outlined,
                                                   size: 35,
                                                   color: Colors.black,
                                                 ),
                                               ),
                                               onTap: () {
-                                                Get.to(
-                                                  () => StoreProfileScreen(sellerId: '', link: '', initialValue: '',),
-                                                
-                                                  transition:
-                                                      Transition.rightToLeft,
+                                                Get.to(() => StoreProfileScreen(sellerId: '',  link: store.link, initialValue: '',),                                                
+                                                  transition: Transition.rightToLeft,
                                                 );
                                               },
                                             ),
@@ -277,6 +266,7 @@ class _StoreScreenState extends State<StoreScreen> {
                 );
               },
             ),
+      )
     );
   }
 }

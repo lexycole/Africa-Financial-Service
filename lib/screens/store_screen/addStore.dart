@@ -13,6 +13,10 @@ import 'package:xcrowme/widgets/big_text.dart';
 import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:xcrowme/widgets/phone_input.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
+
 
 class AddStoreScreen extends StatefulWidget {
   final String sellerId;
@@ -30,6 +34,7 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
   final TextEditingController _linkController = TextEditingController();
   final LoginController loginController = Get.find<LoginController>();
 
+
   Future<void> _addStore() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -46,9 +51,8 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Api-Key': 'gi6paFHGatKXClIE',
-        'Api-Sec-Key':
-            'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+        'Api-Key': '',
+        'Api-Sec-Key': '',
         'Authorization': 'Bearer ${loginController.accessToken.value}',
       };
 
@@ -56,7 +60,7 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
         'name': name,
         'phone': phone,
         'link': link,
-        'seller_uid': widget.sellerId, // Use the passed sellerId
+        'seller_uid': widget.sellerId, 
       };
 
       final http.Response response = await http.post(
@@ -72,28 +76,30 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
           name: name,
           phone: phone,
           link: link,
-          seller_uid: widget.sellerId,  
-          
+          seller_uid: widget.sellerId,            
         );
-
-        Get.to(() => StoreScreen(
-              newStores: [store],
-            )); 
-            
+        Get.to(() => StoreScreen(newStores: [store], ));             
         showSuccessSnackBar("Store Created Successfully", title: "Perfect");
       } else {
-        showFailureSnackBar('Error', title: "Failed to create store");
+        throw jsonDecode(response.body)['data']["seller_uid"] ??
+              jsonDecode(response.body)['data']["name"] ??
+              jsonDecode(response.body)['data']["phone"] ??
+              jsonDecode(response.body)['data']['link'];
+       
       }
     } catch (e) {
-      print(e.toString());
       showFailureSnackBar('Error', title: e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return     
-    Scaffold(
+    return  IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      }, 
+      child: Scaffold(
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -141,34 +147,71 @@ class _AddStoreScreenState extends State<AddStoreScreen> {
                           icon: Icons.account_circle_outlined,
                           textController: _nameController),
                       SizedBox(height: Dimensions.height20),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Note your Store-Link-Name will be required in product screen'),
+                      ),
+                      SizedBox(height: Dimensions.height10),
                       AppTextField(
-                          hintText: '+234**********',
-                          icon: Icons.phone,
-                          textController: _phoneController),
-                      SizedBox(height: Dimensions.height20),
-                      AppTextField(
-                          hintText: 'Link-Name',
+                          hintText: 'Store-Link-Name',
                           icon: Icons.description_outlined,
                           textController: _linkController),
-                      SizedBox(height: Dimensions.height45),
-                      GestureDetector(
-                          onTap: _addStore,
-                          child: Container(
-                              width: Dimensions.screenWidth / 10 * 9,
-                              height: Dimensions.screenHeight / 10,
-                              decoration: BoxDecoration(
-                                color: AppColors.AppBannerColor,
-                                borderRadius:
-                                    BorderRadius.circular(Dimensions.radius20),
+                      SizedBox(height: Dimensions.height20),
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(left: 20.0,),
+                            child: Row(
+                              children: <Widget>[
+                                Image.asset(
+                                  'ng.png',
+                                  width: 50,
+                                  height: 30,
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  '+234',
+                                  style: TextStyle(
+                                      fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.0),
+                              child: PhoneTextField(
+                                textController: _phoneController,
+                                hintText: '8xx xxxx xxx',
+                                icon: Icons.phone,
                               ),
-                              child: Center(
-                                  child: BigText(
-                                      text: "Add",
-                                      size: Dimensions.font20 +
-                                          Dimensions.font20 / 2,
-                                      color: Colors.white)))),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: Dimensions.height45),
+                      ElevatedButton(
+                        onPressed: _addStore,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.AppBannerColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(Dimensions.radius20),
+                          ),
+                          fixedSize: Size(
+                            Dimensions.screenWidth / 10 * 9,
+                            Dimensions.screenHeight / 10,
+                          ),
+                          padding: EdgeInsets.zero,
+                        ),
+                        child: BigText(
+                          text: "Add",
+                          size: Dimensions.font20 + Dimensions.font20 / 2,
+                          color: Colors.white,
+                        ),
+                      )
+
                     ],
                   ))
-                 ]
+                ]
       ),
-    )))])));}}
+    )))]))));}}

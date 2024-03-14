@@ -11,9 +11,10 @@ import 'package:xcrowme/tabs/bottom_tabs.dart';
 import 'package:xcrowme/utils/api_endpoints.dart';
 import 'package:xcrowme/utils/colors.dart';
 import 'package:xcrowme/utils/dimensions.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String initialValue;
@@ -31,7 +32,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final LoginController loginController =
-      Get.find(); // Get the instance of LoginController
+      Get.find();
 
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
@@ -44,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    fetchSellerDetail(); // Call the function to fetch data on widget initialization
+    fetchSellerDetail(); 
     _firstNameController = TextEditingController(text: widget.initialValue);
     _lastNameController = TextEditingController();
     _phoneController = TextEditingController();
@@ -63,22 +64,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void toggleEdit() {
     setState(() {
       _isEditing = !_isEditing;
-      _isDoneVisible = _isEditing; // Update the visibility of the done button
+      _isDoneVisible = _isEditing;
     });
   }
 
-  // Fetch Seller Detail
   Future<void> fetchSellerDetail() async {
     var headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Api-Key': 'gi6paFHGatKXClIE',
-      'Api-Sec-Key': 'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+      'Api-Key': '',
+      'Api-Sec-Key': '',
       'Authorization': 'Bearer ${loginController.accessToken.value}',
     };
 
     setState(() {
-      _isLoading = true; // Show loading indicator
+      _isLoading = true; 
     });
 
     try {
@@ -94,7 +94,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         String lastName = jsonData['last_name'];
         String dob = jsonData['dob'];
         String phone = jsonData['phone'];
-        // Use the fetched data as needed, e.g., display in the text field
         setState(() {
           _firstNameController.text = firstName;
           _lastNameController.text = lastName;
@@ -111,13 +110,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (e) {
       setState(() {
-        _isLoading = false; // Set loading to false on error
+        _isLoading = false; 
       });
-      // showFailureSnackBar('Error', title: e.toString());
+    
     }
   }
 
-// Update Seller Details
   Future<void> updateSellerDetails() async {
     final String firstName = _firstNameController.text;
     final String lastName = _lastNameController.text;
@@ -136,9 +134,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Api-Key': 'gi6paFHGatKXClIE',
+        'Api-Key': '',
         'Api-Sec-Key':
-            'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+            '',
         'Authorization': 'Bearer ${loginController.accessToken.value}',
       };
       final url = Uri.parse(ApiEndPoints.baseUrl +
@@ -152,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
 
       if (response.statusCode == 200) {
-        // Successful update
+       
         final Map<String, dynamic> responseData = json.decode(response.body);
         final UpdateSellerDetailModel updateSeller = UpdateSellerDetailModel(
           uid: responseData['data']['uid'],
@@ -169,7 +167,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-// Delete Seller Details
   Future<void> deleteSellerDetails() async {
     try {
       final LoginController loginController = Get.find<LoginController>();
@@ -187,14 +184,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       final http.Response response = await http.delete(url, headers: headers);
       if (response.statusCode == 204) {
-        // Successful deletion
         showSuccessSnackBar("Seller Deleted Successfully", title: "Deleted");
-        // Navigate to ListOfAllSellersScreen
         Get.offAll(ListOfAllSellersScreen(
-          newSellers: [],
+          newSellers: [], sellerId: '',
         ));
       } else {
-        // Handle the case when deletion fails
         throw 'Error: ${response.statusCode}';
       }
     } catch (e) {
@@ -205,12 +199,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget buildProfileView() {
     if (_isLoading) {
-      // Display loading indicator
       return Center(
-        child: CircularProgressIndicator(),
+        child: CircularProgressIndicator(
+          color: AppColors.AppBannerColor,
+        ),
       );
     } else if (_firstNameController.text.isNotEmpty) {
-      // Display content when status code is 200
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -221,7 +215,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundColor: Colors.grey,
                 child: Icon(Icons.person, color: Colors.white, size: 45),
               ),
-              SizedBox(width: 10), // Add spacing between the avatar and text
+              SizedBox(width: 10),
               LayoutBuilder(
                 builder: (context, constraints) {
                   return FittedBox(
@@ -235,24 +229,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       maxLines: constraints.maxWidth < 200
                           ? 3
-                          : 1, // Adjust the threshold as needed
+                          : 1,
                     ),
                   );
                 },
               ),
-              Spacer(), // Add space between the text and the edit button
+              Spacer(),
               Row(
                 children: [
                   IconButton(
                     onPressed: toggleEdit,
-                    icon: Icon(Icons.edit, color: AppColors.bgBtnColor),
+                    icon: Icon(Icons.edit, color: AppColors.AppBannerColor),
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(Icons.save, color: AppColors.bgBtnColor),
+                    icon: Icon(Icons.save, color: AppColors.AppBannerColor),
                   ),
                 ],
-              ), // Add spacing between the edit button and other elements
+              ),
             ],
           ),
           SizedBox(height: 20),
@@ -303,7 +297,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               SizedBox(height: 20),
             ]),
 
-          // Not Editing
           if (!_isEditing)
             Column(
               children: [
@@ -313,10 +306,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: TextField(
                       controller: _firstNameController,
                       enabled: false,
+                      style: TextStyle(color: Colors.black),
                       decoration: InputDecoration(
-                        border: InputBorder.none, // Remove the border outline
+                        border: InputBorder.none,
                         filled: true,
-                        fillColor: Colors.grey[200],
+                        fillColor: Colors.grey[100],
                       ),
                     ),
                   ),
@@ -327,10 +321,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: TextField(
                     controller: _lastNameController,
                     enabled: false,
+                    style: TextStyle(color: Colors.black),
                     decoration: InputDecoration(
-                      border: InputBorder.none, // Remove the border outline
+                      border: InputBorder.none,
                       filled: true,
-                      fillColor: Colors.grey[200],
+                      fillColor: Colors.grey[100],
                     ),
                   ),
                 ),
@@ -341,7 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     controller: _phoneController,
                     enabled: false,
                     decoration: InputDecoration(
-                      border: InputBorder.none, // Remove the border outline
+                      border: InputBorder.none,
                       filled: true,
                       fillColor: Colors.grey[200],
                     ),
@@ -354,7 +349,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     enabled: false,
                     controller: _dobController,
                     decoration: InputDecoration(
-                      border: InputBorder.none, // Remove the border outline
+                      border: InputBorder.none,
                       filled: true,
                       fillColor: Colors.grey[200],
                     ),
@@ -366,11 +361,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             visible: _isDoneVisible,
             child: Container(
               width: double
-                  .infinity, // Set the width to occupy the available space
+                  .infinity,
               child: ElevatedButton(
                 onPressed: () {
                   if (_isEditing) {
-                    updateSellerDetails(); // Call the function to update the seller details
+                    updateSellerDetails(); 
                   }
                 },
                 child: Text("Done"),
@@ -379,23 +374,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   padding: EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: AppColors.bgBtnColor,
+                  backgroundColor: AppColors.AppBannerColor,
                 ),
               ),
             ),
           ),
-          SizedBox(height: 20),
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              "Log Out",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 255, 89, 89),
-              ),
-            ),
-          ),
+        
           SizedBox(height: 20),
           TextButton(
             onPressed: deleteSellerDetails,
@@ -404,7 +388,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.bgBtnColor,
+                color: AppColors.AppBannerColor,
               ),
             ),
           ),
@@ -415,9 +399,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return Card(
         shape: RoundedRectangleBorder(
           borderRadius:
-              BorderRadius.circular(10), // Adjust the border radius as needed
+              BorderRadius.circular(10),
         ),
-        elevation: 4, // Add elevation for a raised effect
+        elevation: 4,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -432,12 +416,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   TextButton(
                     onPressed: () {
-                      Get.to(() => CreateSellerScreen());
+                      Get.to(() => CreateSellerScreen);
                     },
                     child: Row(
                       children: [
                         Text("Add"),
-                        Icon(Icons.add), // Plus icon
+                        Icon(Icons.add),
                       ],
                     ),
                   ),
@@ -452,14 +436,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      }, 
+      child: Scaffold(
         body: SingleChildScrollView(
             child: Container(
                 width: double.maxFinite,
                 margin: EdgeInsets.only(top: 25.0),
                 padding: EdgeInsets.all(Dimensions.width20),
                 child: Column(children: [
-                  // Seller's Profile Widget
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -468,7 +456,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           width: 500,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment
-                                .spaceBetween, // Align contents to start and end
+                                .spaceBetween, 
                             children: [
                               IconButton(
                                 icon: Icon(Icons.arrow_back_ios,
@@ -486,27 +474,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   textAlign: TextAlign.center,
                                 ),
                               ),
-                              IconButton(
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.AppBannerColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: IconButton(
                                 icon: Icon(
-                                    Icons.add_business, // Add your icon here
-                                    color: AppColors.bgBtnColor,
-                                    size: 36), // Customize the icon color
+                                  Icons.add_business,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
                                 onPressed: () {
-                                  Get.to(
-                                      () => AddStoreScreen(
-                                            sellerId: widget.sellerId,
-                                          ),
+                                  Get.to(() => AddStoreScreen(sellerId: widget.sellerId),
                                       transition: Transition.rightToLeft);
                                 },
                               ),
+                            )
+
                             ],
                           )),
                     ],
                   ),
                   SizedBox(height: 20),
-                  // User Information
                   Padding(
                       padding: EdgeInsets.all(8.0), child: buildProfileView()),
-                ]))));
+                ])))));
   }
 }

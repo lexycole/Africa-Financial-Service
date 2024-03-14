@@ -21,8 +21,8 @@ class WithdrawVerifyOtpController extends GetxController {
     var headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Api-Key': 'gi6paFHGatKXClIE',
-      'Api-Sec-Key': 'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+      'Api-Key': '',
+      'Api-Sec-Key': '',
     };
     try {
       var url = Uri.parse(ApiEndPoints.baseUrl + ApiEndPoints.authEndpoints.verifyToken);

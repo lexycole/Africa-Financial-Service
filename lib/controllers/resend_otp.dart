@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:xcrowme/base/show_failure_custom_message.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:xcrowme/screens/sign_in_screen/index.dart';
 import 'package:xcrowme/utils/api_endpoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,8 +20,8 @@ class ResendOtpController extends GetxController {
     var headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Api-Key': 'gi6paFHGatKXClIE',
-      'Api-Sec-Key': 'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+      'Api-Key': '',
+      'Api-Sec-Key': '',
     };
     try {
       var url = Uri.parse(ApiEndPoints.baseUrl + ApiEndPoints.authEndpoints.resendOtp);

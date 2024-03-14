@@ -11,14 +11,14 @@ class _AuthEndPoints {
   final String banks = '/banks/';
   final String balance = '/balance/';
   final String createSeller = '/seller/create/';
-  final String sellersList = '/seller/';
+  final String sellersList = '/list-sellers/';
   final String sellerDetail = '/seller/detail/{uid}';
   final String updateSellerDetails = '/seller/update/{uid}/';
-  final String deleteSellerDetail = '/seller/delete/{uid}/';
+  final String deleteSellerDetail = '/seller/delete/{uid}';
   final String storesList = '/store/';
   final String createStore = '/store/create/';
-  final String deleteStore = '/store/delete/{link}/';
-  final String storeDetail = '/store/detail/{link}/';
+  final String deleteStore = '/store/delete/{link}';
+  final String storeDetail = '/store/detail/{link}';
   final String storeUpdate = '/store/update/{link}/';
   final String productsList = '/products/';
   final String createProduct = '/products/create/';
@@ -26,6 +26,9 @@ class _AuthEndPoints {
   final String productsDetail = '/products/detail/{label}/';
   final String productsUpdate = '/products/update/{label}/';
   final String productsUpload = '/products/upload/{label}/';
+
+  final String refreshToken = 'https://staging.api.cashrole.com/api/v1/authentication/token/refresh/';
+
 
 
 }

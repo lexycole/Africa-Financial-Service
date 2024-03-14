@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:xcrowme/base/show_failure_custom_message.dart';
 import 'package:xcrowme/controllers/banks_controller.dart';
 import 'package:xcrowme/controllers/login_controller.dart';
-import 'package:xcrowme/screens/home_screen/index.dart';
 import 'package:xcrowme/screens/withdraw_screen/withdraw_verify_otp.dart';
 import 'package:xcrowme/tabs/bottom_tabs.dart';
 import 'package:xcrowme/utils/api_endpoints.dart';
@@ -13,6 +11,9 @@ import 'package:xcrowme/widgets/app_text_field.dart';
 import 'package:xcrowme/widgets/big_text.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
+
 
 class WithdrawScreen extends StatefulWidget {
   const WithdrawScreen({Key? key}) : super(key: key);
@@ -38,8 +39,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     var headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Api-Key': 'gi6paFHGatKXClIE',
-      'Api-Sec-Key': 'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+      'Api-Key': '',
+      'Api-Sec-Key': '',
       'Authorization': 'Bearer ${loginController.accessToken.value}',
     };
 
@@ -56,7 +57,6 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         throw 'Error: ${response.statusCode}';
       }
     } catch (e) {
-      // showFailureSnackBar('Error', title: e.toString());
       throw 'Error: $e';
     }
   }
@@ -65,11 +65,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
   Widget build(BuildContext context) {
     var accountNumberController = TextEditingController();
     var amountController = TextEditingController();
-    // final BankController bankController = Get.find<BankController>();
     final BankController bankController = Get.put(BankController());
 
-
-    return Scaffold(
+    return  IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      }, 
+      child: Scaffold(
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -106,7 +109,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               child: Center(
                 child: SingleChildScrollView(
                   child: Column(
-                    children: [
+                    children:[
                       Container(
                           margin: EdgeInsets.only(left: Dimensions.width20),
                           width: double.maxFinite,
@@ -167,12 +170,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                       SizedBox(height: Dimensions.height20),
                       AppTextField(
                         hintText: 'Amount',
-                        icon: Icons.money_outlined,
+                        icon: Icons.payments_outlined,
                         textController: amountController,
                       ),
                       SizedBox(height: Dimensions.screenHeight * 0.05),
                       GestureDetector(
-                          // onTap: () => Get.to(() => HomeScreen(newStores: [],))
                           onTap: () => Get.to(() => WithdrawVerifyOTP(phoneNumber: '',)),
                           child: Container(
                               width: Dimensions.screenWidth / 10 * 9,
@@ -189,14 +191,15 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                                           Dimensions.font20 / 2,
                                       color: Colors.white)))),
                       SizedBox(height: Dimensions.screenHeight * 0.05)
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      )
     );
   }
 }

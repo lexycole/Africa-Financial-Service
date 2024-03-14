@@ -6,6 +6,6 @@ class UserController extends GetxController {
 
   void setUser(UserModel userModel) {
     user = userModel;
-    update(); // Notify listeners that the user data has been updated
+    update(); 
   }
 }

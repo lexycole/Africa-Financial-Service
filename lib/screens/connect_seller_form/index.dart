@@ -6,6 +6,9 @@ import 'package:xcrowme/utils/colors.dart';
 import 'package:xcrowme/utils/dimensions.dart';
 import 'package:xcrowme/widgets/app_text_field.dart';
 import 'package:xcrowme/widgets/big_text.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
+
 
 class ConnectSellerFormScreen extends StatelessWidget {
   const ConnectSellerFormScreen({Key? key}) : super(key: key);
@@ -14,7 +17,12 @@ class ConnectSellerFormScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var phoneNumberController = TextEditingController();
 
-    return Scaffold(
+    return IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      }, 
+      child: Scaffold(
       body: Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,7 +60,6 @@ class ConnectSellerFormScreen extends StatelessWidget {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      // Create Seller container
                       Container(
                           margin: EdgeInsets.only(left: Dimensions.width20),
                           width: double.maxFinite,
@@ -67,14 +74,12 @@ class ConnectSellerFormScreen extends StatelessWidget {
                                 ),
                               ])),
                       SizedBox(height: Dimensions.height20),
-                      // Phone Number Field
                       AppTextField(
                         hintText: 'Phone Number',
                         icon: Icons.phone_outlined,
                         textController: phoneNumberController,
                       ),
                       SizedBox(height: Dimensions.height20),
-                      // Connect Seller Button
                       GestureDetector(
                           onTap: () => Get.to(() => VerifyOTPScreen(phoneNumber: '',)),
                           child: Container(
@@ -99,7 +104,8 @@ class ConnectSellerFormScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
+        ),
+      )
     );
   }
 }

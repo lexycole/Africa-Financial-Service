@@ -35,8 +35,8 @@ class PhoneTextField extends StatelessWidget {
         controller: textController,
         keyboardType: TextInputType.phone,
         inputFormatters: [
-          LengthLimitingTextInputFormatter(10), // Limit input to 10 characters
-          FilteringTextInputFormatter.digitsOnly, // Only allow digits
+          LengthLimitingTextInputFormatter(10),
+          FilteringTextInputFormatter.digitsOnly,
         ],
         decoration: InputDecoration(
           hintText: hintText,

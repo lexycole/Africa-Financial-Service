@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:xcrowme/routes/route_helpers.dart';
 import 'package:get/get.dart';
 import 'package:xcrowme/utils/colors.dart';
-import 'package:xcrowme/utils/dimensions.dart';
 
 void main() => runApp(const SplashScreen());
 
@@ -24,7 +23,6 @@ class SplashScreenWidget extends StatefulWidget {
   State<SplashScreenWidget> createState() => _SplashScreenWidgetState();
 }
 
-/// AnimationControllers can be created with `vsync: this` because of TickerProviderStateMixin.
 class _SplashScreenWidgetState extends State<SplashScreenWidget>
     with TickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
@@ -36,7 +34,6 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget>
     curve: Curves.linear,
   );
 
-  // Delay animation for 5 seconds, move to next screen
   @override
   void initState() {
     super.initState();
@@ -45,7 +42,6 @@ class _SplashScreenWidgetState extends State<SplashScreenWidget>
     });
   }
 
-  // Trigger the animation controller
   @override
   void dispose() {
     _controller.dispose();

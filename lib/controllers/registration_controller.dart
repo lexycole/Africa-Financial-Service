@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:xcrowme/base/show_failure_custom_message.dart';
 import 'package:xcrowme/base/show_success_custom_message.dart';
-import 'package:xcrowme/controllers/login_controller.dart';
 import 'package:xcrowme/controllers/users_controller.dart';
 import 'package:xcrowme/models/users_modal.dart';
 import 'package:xcrowme/screens/verify-otp_screen/index.dart';
@@ -26,13 +25,13 @@ class RegistrationController extends GetxController {
   RxString accessToken = ''.obs;
   RxDouble balance = 0.0.obs;
   
-  Future<void> registerWithEmail() async {
+  Future<void> register() async {
     try {
       var headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Api-Key': 'gi6paFHGatKXClIE',
-        'Api-Sec-Key':'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+        'Api-Key': '',
+        'Api-Sec-Key':'',
       };
       var url = Uri.parse(
           ApiEndPoints.baseUrl + ApiEndPoints.authEndpoints.registerEmail);
@@ -73,13 +72,21 @@ class RegistrationController extends GetxController {
           Get.to(VerifyOTPScreen(phoneNumber: userData.phoneNumber));        
         } else {
           throw jsonDecode(response.body)['data']["password"] ??
+              jsonDecode(response.body)['data']["password2"] ??
               jsonDecode(response.body)['data']['email'] ??
-              jsonDecode(response.body)['data']['phone'];
+              jsonDecode(response.body)['data']["first_name"] ??
+              jsonDecode(response.body)['data']["last_name"] ??              
+              jsonDecode(response.body)['data']['phone'] ??
+              jsonDecode(response.body)['data']['dob']; 
         }
       } else {
         throw jsonDecode(response.body)['data']["password"] ??
-            jsonDecode(response.body)['data']['email'] ??
-            jsonDecode(response.body)['data']['phone'];
+              jsonDecode(response.body)['data']["password2"] ??
+              jsonDecode(response.body)['data']['email'] ??
+              jsonDecode(response.body)['data']["first_name"] ??
+              jsonDecode(response.body)['data']["last_name"] ??              
+              jsonDecode(response.body)['data']['phone'] ??
+              jsonDecode(response.body)['data']['dob']; 
       }
     } catch (e) {
       showFailureSnackBar('Error', title: e.toString());

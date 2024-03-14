@@ -21,8 +21,8 @@ class VerifyOtpController extends GetxController {
     var headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Api-Key': 'gi6paFHGatKXClIE',
-      'Api-Sec-Key': 'XpxuKn.5tL0HT1VeuFIjg8EDRznQ07xPs3TcKUx.vAEgQcOgGjPikbc2',
+      'Api-Key': '',
+      'Api-Sec-Key': '',
     };
     try {
       var url = Uri.parse(ApiEndPoints.baseUrl + ApiEndPoints.authEndpoints.verifyToken);
@@ -40,7 +40,6 @@ class VerifyOtpController extends GetxController {
         final json = jsonDecode(response.body);
         if (json['success'] == true) {
           otpController.clear();
-          // Get.offAll(BottomTab(initialIndex: 0));
           Get.to(()=> SignInScreen());
         } else if (json['error']['code'] == 400) {
           throw jsonDecode(response.body)['data']['otp'];

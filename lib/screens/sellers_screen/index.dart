@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
 import 'package:xcrowme/screens/List_of_all_registered_sellers/index.dart';
-// import 'package:xcrowme/screens/account_screen/index.dart';
 import 'package:xcrowme/screens/create_seller_screen/index.dart';
 import 'package:xcrowme/screens/connect_seller_form/index.dart';
 import 'package:xcrowme/screens/store_screen/index.dart';
@@ -13,7 +14,13 @@ class SellersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return 
+    IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      },  
+      child:Scaffold(
         body: SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: Container(
@@ -30,7 +37,6 @@ class SellersScreen extends StatelessWidget {
                       ])),
 
                   SizedBox(height: 5.0),
-                  // 01. Create a seller
                   InkWell(
                     splashColor: Color.fromARGB(255, 5, 20, 68),
                     onTap: () => Get.to(() => CreateSellerScreen(),
@@ -56,8 +62,7 @@ class SellersScreen extends StatelessWidget {
                                   SizedBox(width: 10),
                                   Expanded(
                                     child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text("Create a seller",
                                             style: TextStyle(
@@ -75,7 +80,6 @@ class SellersScreen extends StatelessWidget {
                           ],
                         )),
                   ),
-                  // Connect Seller
                   InkWell(
                     splashColor: Color.fromARGB(255, 5, 20, 68),
                     onTap: () => Get.to(() => ConnectSellerFormScreen(),
@@ -120,12 +124,11 @@ class SellersScreen extends StatelessWidget {
                           ],
                         )),
                   ),
-                  // 03. List of users
                   InkWell(
                     splashColor: Color.fromARGB(255, 5, 20, 68),
                     onTap: () => Get.to(
                         () => ListOfAllSellersScreen(
-                              newSellers: [],
+                              newSellers: [], sellerId: '',
                             ),
                         transition: Transition.rightToLeftWithFade),
                     child: Card(
@@ -169,7 +172,6 @@ class SellersScreen extends StatelessWidget {
                         )),
                   ),
 
-                  // 02. Withdraw
                   InkWell(
                     splashColor: Color.fromARGB(255, 5, 20, 68),
                     onTap: () => Get.to(() => WithdrawScreen(),
@@ -214,7 +216,7 @@ class SellersScreen extends StatelessWidget {
                           ],
                         )),
                   ),
-                  // 05. Amount of stores
+                 
                   InkWell(
                     splashColor: Color.fromARGB(255, 5, 20, 68),
                     onTap: () => Get.to(
@@ -262,146 +264,11 @@ class SellersScreen extends StatelessWidget {
                           ],
                         )),
                   ),
-                  // 06. Global Link store
-                  // InkWell(
-                  //   splashColor: Color.fromARGB(255, 5, 20, 68),
-                  //   onTap: () => Get.to(() => GlobalStoreLinkScreen()),
-                  //   child: Card(
-                  //     margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  //     child: Column(
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: [
-                  //       Container(
-                  //         padding: const EdgeInsets.all(10.0),
-                  //         child: Row(
-                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //           children: [
-                  //             CircleAvatar(
-                  //               radius: 30,
-                  //               backgroundColor: AppColors.AppBannerColor,
-                  //               child: Icon(Icons.other_houses_sharp,
-                  //                   color: Colors.white, size: 35),
-                  //             ),
-                  //             SizedBox(width: 10),
-                  //             Expanded(
-                  //               child: Row(
-                  //                 crossAxisAlignment: CrossAxisAlignment.start,
-                  //                 children: [
-                  //                   Text("Global Store",
-                  //                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //             SizedBox(width: 10),
-                  //             IconButton(
-                  //               onPressed: () {
-                  //                 Get.to(() => GlobalStoreLinkScreen(), transition: Transition.leftToRight);
-                  //               },
-                  //               icon: Icon(
-                  //                 Icons.arrow_forward_ios,
-                  //                 color: Colors.black,
-                  //                 size: 30),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   )
-                  // ),
-                  // ),
-                  // 07. Profile
-                  // InkWell(
-                  //   splashColor: Color.fromARGB(255, 5, 20, 68),
-                  //   onTap: () => Get.to(() => AccountScreen(),
-                  //       transition: Transition.rightToLeftWithFade),
-                  //   child: Card(
-                  //       margin: const EdgeInsets.symmetric(
-                  //           vertical: 10, horizontal: 10),
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Container(
-                  //             padding: const EdgeInsets.all(10.0),
-                  //             child: Row(
-                  //               mainAxisAlignment:
-                  //                   MainAxisAlignment.spaceBetween,
-                  //               children: [
-                  //                 CircleAvatar(
-                  //                   radius: 30,
-                  //                   backgroundColor: AppColors.AppBannerColor,
-                  //                   child: Icon(Icons.person,
-                  //                       color: Colors.white, size: 35),
-                  //                 ),
-                  //                 SizedBox(width: 10),
-                  //                 Expanded(
-                  //                   child: Row(
-                  //                     crossAxisAlignment:
-                  //                         CrossAxisAlignment.start,
-                  //                     children: [
-                  //                       Text("Account",
-                  //                           style: TextStyle(
-                  //                               fontSize: 18,
-                  //                               fontWeight: FontWeight.bold)),
-                  //                     ],
-                  //                   ),
-                  //                 ),
-                  //                 SizedBox(width: 10),
-                  //                 Icon(Icons.arrow_forward_ios,
-                  //                     color: Colors.black, size: 30),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       )),
-                  // ),
-                  // 08. Connect Sellers
-                  // 07. Properties
-                  //   InkWell(
-                  //     splashColor: Color.fromARGB(255, 5, 20, 68),
-                  //     onTap: () => Get.to(() => PropertiesScreen()),
-                  //     child: Card(
-                  //       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  //       child: Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         Container(
-                  //           padding: const EdgeInsets.all(10.0),
-                  //           child: Row(
-                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //             children: [
-                  //               CircleAvatar(
-                  //                 radius: 30,
-                  //                 backgroundColor: AppColors.bgBtnColor,
-                  //                 child: Icon(Icons.description,
-                  //                     color: Colors.white, size: 35),
-                  //               ),
-                  //               SizedBox(width: 10),
-                  //               Expanded(
-                  //                 child: Row(
-                  //                   crossAxisAlignment: CrossAxisAlignment.start,
-                  //                   children: [
-                  //                     Text("Properties",
-                  //                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  //                   ],
-                  //                 ),
-                  //               ),
-                  //               SizedBox(width: 10),
-                  //               IconButton(
-                  //                 onPressed: () {
-                  //                   Get.to(() => PropertiesScreen(), transition: Transition.leftToRight);
-                  //                 },
-                  //                 icon: Icon(
-                  //                   Icons.arrow_forward_ios,
-                  //                   color: Colors.black,
-                  //                   size: 30),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     )
-                  //   ),
-                  // ),
-                ]))));
+                ]
+                )
+                )
+                )
+                )
+                );
   }
 }

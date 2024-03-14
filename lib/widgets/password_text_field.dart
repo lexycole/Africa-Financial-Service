@@ -6,13 +6,13 @@ class PasswordTextField extends StatefulWidget {
   final TextEditingController textController;
   final String hintText;
   final IconData icon;
-  final bool isPassword; // New property to indicate if it's a password field
+  final bool isPassword;
 
   const PasswordTextField({
     required this.textController,
     required this.hintText,
     required this.icon,
-    this.isPassword = false, // Default to not a password field
+    this.isPassword = false,
     Key? key,
   }) : super(key: key);
 
@@ -21,7 +21,7 @@ class PasswordTextField extends StatefulWidget {
 }
 
 class _PasswordTextFieldState extends State<PasswordTextField> {
-  bool isPasswordVisible = false; // Keep track of password visibility
+  bool isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
       ),
       child: TextField(
         controller: widget.textController,
-        obscureText: widget.isPassword ? !isPasswordVisible : false, // Hide/show password
+        obscureText: widget.isPassword ? !isPasswordVisible : false,
         decoration: InputDecoration(
           hintText: widget.hintText,
           prefixIcon: Icon(

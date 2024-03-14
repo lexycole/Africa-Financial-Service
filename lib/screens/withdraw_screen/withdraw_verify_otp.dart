@@ -8,6 +8,8 @@ import 'package:xcrowme/utils/colors.dart';
 import 'package:xcrowme/utils/dimensions.dart';
 import 'package:xcrowme/widgets/big_text.dart';
 import 'dart:async';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:xcrowme/auth/auth_middleware.dart';
 
 
 class WithdrawVerifyOTP extends StatefulWidget {
@@ -73,7 +75,13 @@ int _secondsRemaining = 120;
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     String phoneNumber = verifyOtpController.phoneController.text;
-    return Scaffold(
+
+    return IdleDetector(
+      idleTime:Duration(minutes: 3),
+      onIdle: () {
+        showTimerDialog(1140000);
+      }, 
+      child: Scaffold(
       backgroundColor: Color.fromARGB(255, 5, 20, 68),
       body: SingleChildScrollView(
         child: Container(
@@ -217,6 +225,6 @@ int _secondsRemaining = 120;
               ]))
         ])),
       ),
-    );
+    ));
   }
 }

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:xcrowme/screens/history_screen/index.dart';
 import 'package:xcrowme/screens/home_screen/index.dart';
-import 'package:xcrowme/screens/profile_screen/index.dart';
 import 'package:xcrowme/screens/sellers_screen/index.dart';
-import 'package:get/get.dart';
 
 class BottomTab extends StatefulWidget {
   final int initialIndex;
@@ -20,7 +18,6 @@ class _BottomTabState extends State<BottomTab> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomeScreen(newStores: [],),
     SellersScreen(),
-    ProfileScreen(sellerId: '', initialValue: ''),
     HistoryScreen(),
   ];
 
@@ -43,7 +40,6 @@ class _BottomTabState extends State<BottomTab> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        // Remaining code remains the same
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -52,10 +48,6 @@ class _BottomTabState extends State<BottomTab> {
           BottomNavigationBarItem(
             icon: Icon(Icons.group),
             label: 'Sellers',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_box),
-            label: 'Profile',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long),

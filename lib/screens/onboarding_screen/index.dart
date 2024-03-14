@@ -14,7 +14,7 @@ class OnboardingScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                child: const SizedBox(height: 45), // Add some height
+                child: const SizedBox(height: 45), 
               ),
               SizedBox(
                 height: 45,
@@ -48,7 +48,7 @@ class OnboardingScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                child: const SizedBox(height: 45), // Add some height
+                child: const SizedBox(height: 45), 
               ),
               SizedBox(
                 height: 45,
@@ -83,7 +83,7 @@ class OnboardingScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              child: const SizedBox(height: 30), // Add some height
+              child: const SizedBox(height: 30), 
             ),
             SizedBox(
               height: 45,
