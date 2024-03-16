@@ -35,4 +35,4 @@ The mobile system integrates seamlessly with various APIs, enhancing its functio
 [Akinro Olawale](https://github.com/lexycole)
 
 # 🔖 Licence
-The project is available under the [MIT License](https://github.com/lexycole/Soul-Meet-Universe/blob/main/LICENSE).
+The project is available under the [MIT License](https://github.com/lexycole/Africa-Financial-Service/blob/main/LICENSE).
